@@ -26,44 +26,26 @@ verticalSeg(Number, point(X, Y1), point(X, Y2)) :- seg(Number, point(X, Y1), poi
 
 % Правило для определения пересекающихся отрезков
 cross(N, M, point(X, Y), NL, ML) :-
-  horizSeg(N, point(HX1, HY), point(HX2, HY)),
-  verticalSeg(M, point(VX, VY1), point(VX, VY2)),
-  HX1 =< VX, VX =< HX2, % Проверка, что вертикальный отрезок пересекает горизонтальный по X
-  VY1 >= HY, HY >= VY2, % Проверка, что горизонтальный отрезок пересекает вертикальный по Y
-  X = VX, % Точка пересечения по X
-  Y = HY, % Точка пересечения по Y
-  distance(point(HX1, HY), point(HX2, HY), NL), % Длина горизонтального отрезка
-  distance(point(VX, VY1), point(VX, VY2), ML). % Длина вертикального отрезка
+  horizSeg(N, point(HX1, Y), point(HX2, Y)),
+  verticalSeg(M, point(X, VY1), point(X, VY2)),
+  HX1 =< X, X =< HX2, % Проверка, что вертикальный отрезок пересекает горизонтальный по X
+  VY1 >= Y, Y >= VY2, % Проверка, что горизонтальный отрезок пересекает вертикальный по Y
+  distance(point(HX1, Y), point(HX2, Y), NL), % Длина горизонтального отрезка
+  distance(point(X, VY1), point(X, VY2), ML). % Длина вертикального отрезка
 
 crossBoth(N, M, point(X, Y), NL, ML) :-
   (cross(N, M, point(X1, Y1), NL1, ML1), X is X1, Y is Y1, NL is NL1, ML is ML1);
   (cross(M, N, point(X2, Y2), NL2, ML2), X is X2, Y is Y2, NL is NL2, ML is ML2).
 
-# cross(M, N, point(X, Y), NL, ML) :-
-#   horizSeg(N, point(HX1, HY), point(HX2, HY)),
-#   verticalSeg(M, point(VX, VY1), point(VX, VY2)),
-#   HX1 =< VX, VX =< HX2, % Проверка, что вертикальный отрезок пересекает горизонтальный по X
-#   VY1 >= HY, HY >= VY2, % Проверка, что горизонтальный отрезок пересекает вертикальный по Y
-#   X = VX, % Точка пересечения по X
-#   Y = HY, % Точка пересечения по Y
-#   distance(point(HX1, HY), point(HX2, HY), NL), % Длина горизонтального отрезка
-#   distance(point(VX, VY1), point(VX, VY2), ML). % Длина вертикального отрезка
-
 different(X,Y) :- X \= Y.
-
-
 
 % правило определения периметра и площади   прямоугольников, образуемых пересекающимися отрезками
 perimetr(A,B,C,D,P,S) :-
-  horizSeg(A, point(AX1, AY), point(AX2, AY)),
-  horizSeg(C, point(CX1, CY), point(CX2, CY)),
-  verticalSeg(B, point(BX, BY1), point(BX, BY2)),
-  verticalSeg(D, point(DX, DY1), point(DX, DY2)),
-  AY > CY,
-  BX > DX,
-  crossBoth(A, B, point(ABX, ABY), _, _),
-  crossBoth(B, C, point(BCX, BCY), _, _),
-  crossBoth(C, D, point(CDX, CDY), _, _),
-  crossBoth(D, A, point(DAX, DAY), _, _),
-  P is ((ABX - DAX)+(ABY - BCY)+(BCX - CDX)+(DAY - CDY)),
-  S is ((ABX - DAX)*(ABY - BCY)).
+  crossBoth(A, B, point(X1, Y2), _, _),
+  crossBoth(B, C, point(X1, Y1), _, _),
+  crossBoth(C, D, point(X2, Y1), _, _),
+  crossBoth(D, A, point(X2, Y2), _, _),
+  X1 > X2,
+  Y1 < Y2,
+  P is 2*(X1 - X2)*(Y2 - Y1),
+  S is (X1 - X2)*(Y2 - Y1).
