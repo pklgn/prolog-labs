@@ -47,5 +47,5 @@ perimetr(A,B,C,D,P,S) :-
   crossBoth(D, A, point(X2, Y2), _, _),
   X1 > X2,
   Y1 < Y2,
-  P is 2*(X1 - X2)*(Y2 - Y1),
+  P is 2*((X1 - X2)+(Y2 - Y1)),
   S is (X1 - X2)*(Y2 - Y1).
